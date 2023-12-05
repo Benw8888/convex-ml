@@ -15,8 +15,9 @@ class WideModel(nn.Module):
             nn.Linear(self.hidden_dim, self.output_dim),
         )
         
-        self.softmax = nn.Softmax()
+        self.softmax = nn.Sigmoid()
         self.nll = nn.NLLLoss(reduction="mean")
+        self.BCEWithLogitsLoss = nn.BCEWithLogitsLoss()
         
     def forward(self, x):
         x = x.view(x.size()[0],-1)
@@ -24,8 +25,7 @@ class WideModel(nn.Module):
     
     def loss(self, x, labels):
         logits = self.forward(x)
-        probabilities = self.softmax(logits)
-        return self.nll(probabilities, labels)
+        return self.BCEWithLogitsLoss(logits, labels)
     
     def flatten_parameters(self):
         # Extract parameters from the model
